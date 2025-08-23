@@ -2,7 +2,8 @@
 import ChatSession from "../models/ChatSession.js";
 import path from "path";
 import fs from "fs";
-import { loadPDF, loadDOCX, loadXLSX, loadTXT } from "../utils/sourceLoader.js"; 
+import { loadPDF, loadDOCX, loadTXT,loadWebsite, loadYoutubeVideo} from "../utils/sourceLoader.js"; 
+import { deleteEmbeddings } from "../utils/db.js";
 
 
 export const addFileSource = async (req, res) => {
@@ -33,18 +34,21 @@ export const addFileSource = async (req, res) => {
       metadata: { path: file.path, size: file.size }
     };
 
+
+
     chat.sources.push(newSource);
     await chat.save();
 
-    
+    const sourceId = chat.sources[chat.sources.length - 1]._id.toString();
+
     if (type === "pdf") {
-      await loadPDF(file.path, chatId);
+      await loadPDF(file.path, chatId,sourceId);
     } else if (type === "docx") {
-      await loadDOCX(file.path, chatId);
+      await loadDOCX(file.path, chatId,sourceId);
     } else if (type === "xlsx") {
-      await loadXLSX(file.path, chatId);
+      await loadXLSX(file.path, chatId,sourceId);
     } else if (type === "txt") {
-      await loadTXT(file.path, chatId);
+      await loadTXT(file.path, chatId,sourceId);
     }
 
     res.json({ message: "File source added", source: newSource });
@@ -65,6 +69,7 @@ export const addYoutubeSource = async (req, res) => {
     const chat = await ChatSession.findById(chatId);
     if (!chat) return res.status(404).json({ error: "Chat session not found" });
 
+  
     const newSource = {
       type: "youtube",
       title: "YouTube Video",
@@ -74,6 +79,8 @@ export const addYoutubeSource = async (req, res) => {
     chat.sources.push(newSource);
     await chat.save();
 
+    const sourceId = chat.sources[chat.sources.length - 1]._id.toString();
+    await loadYoutubeVideo(url,chatId,sourceId);
     
     res.json({ message: "YouTube source added", source: newSource });
   } catch (err) {
@@ -102,6 +109,8 @@ export const addWebsiteSource = async (req, res) => {
     chat.sources.push(newSource);
     await chat.save();
 
+    const sourceId = chat.sources[chat.sources.length - 1]._id.toString();
+    await loadWebsite(url,chatId,sourceId);
     
     res.json({ message: "Website source added", source: newSource });
   } catch (err) {
@@ -123,6 +132,7 @@ export const deleteSource = async (req, res) => {
       (src) => src._id.toString() !== sourceId
     );
     await chat.save();
+    await deleteEmbeddings(chatId,sourceId);
 
     res.json({ success: true, message: "Source removed" });
   } catch (err) {

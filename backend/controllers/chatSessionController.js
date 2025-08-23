@@ -1,5 +1,5 @@
 import ChatSession from "../models/ChatSession.js";
-
+import { queryLLM } from "../utils/query.js"
 
 export const getChatByChatId = async (req, res) => {
   try {
@@ -43,11 +43,15 @@ export const addMessage = async (req, res) => {
     const chat = await ChatSession.findById(chatId);
     if (!chat) return res.status(404).json({ error: "Session not found" });
 
-    const newMessage = { role, content, citations };
-    chat.messages.push(newMessage);
+    const userMessage = { role:"user", content, citations };
+    chat.messages.push(userMessage);
+
+    const AIresponse = await queryLLM(content,chatId);
+    const AImessage = {role : "assistant",content:AIresponse,citations}
+    chat.messages.push(AImessage);
     await chat.save();
 
-    res.status(201).json(newMessage);
+    res.status(201).json(chat.messages);
   } catch (err) {
     console.error("❌ Error adding message:", err);
     res.status(500).json({ error: "Failed to add message" });

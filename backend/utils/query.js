@@ -3,52 +3,65 @@ import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { TaskType } from "@google/generative-ai";
 import { QdrantVectorStore } from "@langchain/qdrant"
 import { OpenAI } from "openai/client.js";
-
+import { queryEmbeddings } from "./db.js";
 import "dotenv/config"
 
 
 
-const chat = async (userQuery) => {
-    const embeddings = new GoogleGenerativeAIEmbeddings({
-        model: "text-embedding-004", // 768 dimensions
-        taskType: TaskType.RETRIEVAL_DOCUMENT,
-        title: "Document title",
-    });
+export const queryLLM = async (userQuery, chatId) => {
+  try {
+    // 1. Fetch relevant docs from vector DB
+    const relevantDocs = await queryEmbeddings(userQuery, chatId, 3);
 
-    const vectorStore = await QdrantVectorStore.fromExistingCollection(
-        embeddings, 
-        {
-            url : "http://localhost:6333",
-            collectionName : "YTVideos"
-        }
-    )
-    const vectorRetriver = vectorStore.asRetriever({ k : 5});
-
-    const relevantChunks = await vectorRetriver.invoke(userQuery);
+    // 2. Prepare system prompt
     const SYSTEM_PROMPT = `
-    You are an helpful assistant that answers questions based on the context available to you from a PDF file and also your knowledge.
-    with content and its explanation and also page number.
-    Only answer based on the available context from the file only.
-    Context:
-    ${JSON.stringify(relevantChunks)}
-    `
+You are a helpful assistant that answers questions strictly based on the provided context.
+Each context entry includes the document text and its metadata (chatId, sourceId, page, etc).
+Always use both the content and metadata when forming your answer.
+If metadata contains page number or title, mention it in your response.
 
+Context:
+${relevantDocs.map(d => `
+---
+Text: ${d.text}
+Metadata: ${JSON.stringify(d.metadata, null, 2)}
+Score: ${d.score}
+---`).join("\n")}
+`;
+
+    // 3. Call LLM safely
     const openai = new OpenAI({
-        apiKey: process.env.GOOGLE_API_KEY,
-        baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
+      apiKey: process.env.GOOGLE_API_KEY,
+      baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
     });
 
     const response = await openai.chat.completions.create({
-    model: "gemini-2.5-pro",
-    messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            {
-                role: "user",
-                content: userQuery,
-            },
-        ],
+      model: "gemini-2.0-flash",
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: userQuery },
+      ],
     });
 
-    console.log(response.choices[0].message.content)
-}
+    // 4. Extract and normalize response
+    let content = response.choices?.[0]?.message?.content ?? "";
+
+    if (Array.isArray(content)) {
+      content = content.map(c => (c.text || c)).join("\n");
+    }
+    if (typeof content !== "string") {
+      content = JSON.stringify(content);
+    }
+
+    return content.trim() || "⚠️ Sorry, I couldn’t generate a response this time.";
+
+  } catch (err) {
+    console.error("❌ LLM API error:", err.message || err);
+
+    // return a safe, user-friendly fallback message
+    return "⚠️ Sorry, I couldn’t connect to the AI service. Please try again later.";
+  }
+};
+
+
 

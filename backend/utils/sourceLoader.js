@@ -1,57 +1,68 @@
 import { YoutubeLoader } from "@langchain/community/document_loaders/web/youtube";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+import { DocxLoader } from "@langchain/community/document_loaders/fs/docx";
+import { TextLoader } from "langchain/document_loaders/fs/text";
+import { RecursiveUrlLoader } from "@langchain/community/document_loaders/web/recursive_url";
+import { compile } from "html-to-text";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { TaskType } from "@google/generative-ai";
 import { QdrantVectorStore } from "@langchain/qdrant"
+import { storeEmbeddings } from "./db.js";
 import "dotenv/config"
 
 
-export const loadPDF = async (pdfFilePath, chatId) => {
+export const loadPDF = async (pdfFilePath, chatId, sourceId) => {
   const loader = new PDFLoader(pdfFilePath);
-  const docs = await loader.load();
-  await storeEmbeddings(docs, chatId);  
+  const docs = await loader.load()
+  await storeEmbeddings(docs, chatId,sourceId);  
 };
 
-export const loadDOCX = async (docFilePath, chatId) => {
-
+export const loadDOCX = async (docFilePath, chatId, sourceId) => {
+  const loader = new DocxLoader(docFilePath);
+  const docs = await loader.load();
+  await storeEmbeddings(docs, chatId, sourceId); 
 }
 
-export const loadXLSX = async (excelFilePath, chatId) => {
+export const loadWebsite = async (websiteURL, chatId, sourceId) => {
+  const compiledConvert = compile({ wordwrap: 130 }); // returns (text: string) => string;
 
+  const loader = new RecursiveUrlLoader(websiteURL, {
+    extractor: compiledConvert,
+    maxDepth: 2
+  });
+  const docs = await loader.load();
+  await storeEmbeddings(docs, chatId, sourceId);
 }
 
-const loadWebsite = async (websiteURL, chatId) => {
-
+export const loadTXT = async (textFilePath, chatId, sourceId) => {
+    const loader = new TextLoader(textFilePath);
+    const docs = await loader.load();
+    await storeEmbeddings(docs, chatId, sourceId); 
 }
 
-export const loadTXT = async (textFilePath, chatId) => {
-
-
-}
-
-export const LoadYoutubeVideo = async (youtubeUrl, chatId) => {
+export const loadYoutubeVideo = async (youtubeUrl, chatId, sourceId) => {
     const loader = YoutubeLoader.createFromUrl(youtubeUrl, {
         language: "en",
         addVideoInfo: true,
     });
     const docs = await loader.load();
-    storeEmbeddings(docs);
+    storeEmbeddings(docs, chatId, sourceId);
 }
 
-const storeEmbeddings = async (docs, chatId) => {
-  const embeddings = new GoogleGenerativeAIEmbeddings({
-    model: "text-embedding-004",
-    taskType: TaskType.RETRIEVAL_DOCUMENT,
-  });
+// const storeEmbeddings = async (docs, chatId) => {
+//   const embeddings = new GoogleGenerativeAIEmbeddings({
+//     model: "text-embedding-004",
+//     taskType: TaskType.RETRIEVAL_DOCUMENT,
+//   });
 
-  await QdrantVectorStore.fromDocuments(
-    docs,
-    embeddings,
-    {
-      url: "http://localhost:6333",
-      collectionName: `chat_${chatId}`,  
-    }
-  );
+//   await QdrantVectorStore.fromDocuments(
+//     docs,
+//     embeddings,
+//     {
+//       url: "http://localhost:6333",
+//       collectionName: `chat_${chatId}`,  
+//     }
+//   );
 
-  console.log(`✅ Indexed docs into collection chat_${chatId}`);
-};
+//   console.log(`✅ Indexed docs into collection chat_${chatId}`);
+// };
