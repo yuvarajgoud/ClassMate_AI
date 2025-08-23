@@ -9,14 +9,13 @@ const messageSchema = new mongoose.Schema({
 });
 
 const sourceSchema = new mongoose.Schema({
-  type: { type: String, enum: ["pdf", "youtube", "text"], required: true },
+  type: { type: String, enum: ["pdf","txt","docx","xlsx","youtube", "text","website"], required: true },
   title: String,
   metadata: Object,
   createdAt: { type: Date, default: Date.now }
 });
 
 const chatSessionSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   title: { type: String, default: "New Chat" },
   messages: [messageSchema],
   sources: [sourceSchema],
