@@ -15,19 +15,14 @@ export const addFileSource = async (req, res) => {
     if (!file) return res.status(400).json({ error: "No file uploaded" });
 
     
-    const ext = path.extname(file.originalname).toLowerCase();
-    let type = null;
+    
 
-    if (ext === ".pdf") type = "pdf";
-    else if (ext === ".docx") type = "docx";
-    else if (ext === ".xlsx") type = "xlsx";
-    else if (ext === ".txt") type = "txt";
-    else return res.status(400).json({ error: "Unsupported file type" });
+    let type = "file";
 
     
     const chat = await ChatSession.findById(chatId);
     if (!chat) return res.status(404).json({ error: "Chat session not found" });
-
+    
     const newSource = {
       type,
       title: file.originalname,
@@ -41,13 +36,16 @@ export const addFileSource = async (req, res) => {
 
     const sourceId = chat.sources[chat.sources.length - 1]._id.toString();
 
-    if (type === "pdf") {
+    const ext = path.extname(file.originalname).toLowerCase();
+    
+
+    if (ext === "pdf") {
       await loadPDF(file.path, chatId,sourceId);
-    } else if (type === "docx") {
+    } else if (ext === "docx") {
       await loadDOCX(file.path, chatId,sourceId);
-    } else if (type === "xlsx") {
+    } else if (ext === "xlsx") {
       await loadXLSX(file.path, chatId,sourceId);
-    } else if (type === "txt") {
+    } else if (ext === "txt") {
       await loadTXT(file.path, chatId,sourceId);
     }
 

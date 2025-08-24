@@ -9,7 +9,7 @@ const messageSchema = new mongoose.Schema({
 });
 
 const sourceSchema = new mongoose.Schema({
-  type: { type: String, enum: ["pdf","txt","docx","xlsx","youtube", "text","website"], required: true },
+  type: { type: String, enum: ["file","youtube","website"], required: true },
   title: String,
   metadata: Object,
   createdAt: { type: Date, default: Date.now }

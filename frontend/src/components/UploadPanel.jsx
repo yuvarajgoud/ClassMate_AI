@@ -91,12 +91,8 @@ export default function UploadPanel({ chatId }) {
   };
 
   const getIcon = (type) => {
-    console.log(type)
     switch (type) {
-      case "pdf":
-      case "docx":
-      case "txt":
-      case "xlsx":
+      case "file":
         return <FaFileAlt className="text-blue-400" />;
       case "website":
         return <FaGlobe className="text-green-400" />;
