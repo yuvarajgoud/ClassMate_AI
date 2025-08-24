@@ -11,24 +11,24 @@ import "dotenv/config"
 export const queryLLM = async (userQuery, chatId) => {
   try {
     // 1. Fetch relevant docs from vector DB
-    const relevantDocs = await queryEmbeddings(userQuery, chatId, 3);
+    const relevantDocs = await queryEmbeddings(userQuery, chatId, 5);
 
     // 2. Prepare system prompt
     const SYSTEM_PROMPT = `
-You are a helpful assistant that answers questions strictly based on the provided context.
-Each context entry includes the document text and its metadata (chatId, sourceId, page, etc).
-Always use both the content and metadata when forming your answer.
-If metadata contains page number or title, mention it in your response.
+        You are a helpful assistant that answers questions strictly based on the provided context.
+        Each context entry includes the document text and its metadata (chatId, sourceId, page, etc).
+        Always use both the content and metadata when forming your answer.
+        If metadata contains page number or title, mention it in your response.
 
-Context:
-${relevantDocs.map(d => `
----
-Text: ${d.text}
-Metadata: ${JSON.stringify(d.metadata, null, 2)}
-Score: ${d.score}
----`).join("\n")}
+        Context:
+        ${relevantDocs.map(d => `
+        ---
+        Text: ${d.text}
+        Metadata: ${JSON.stringify(d.metadata, null, 2)}
+        Score: ${d.score}
+        ---`).join("\n")}
 `;
-
+    console.log(SYSTEM_PROMPT);
     // 3. Call LLM safely
     const openai = new OpenAI({
       apiKey: process.env.GOOGLE_API_KEY,
