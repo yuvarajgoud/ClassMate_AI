@@ -29,7 +29,7 @@ export default function ChatInterface({ chatId }) {
   return (
     <div className="flex flex-col w-full max-w-4xl mx-auto p-6 space-y-4">
       {/* Chat Card */}
-      <div className="flex flex-col h-[90vh] bg-white dark:bg-gray-900 rounded-3xl shadow-xl p-6">
+       <div className="flex flex-col h-[90vh] w-full max-w-[1600px] px-6 mx-auto bg-white dark:bg-gray-900 rounded-3xl shadow-xl p-6">
         
         {/* Messages area */}
         <div className="flex-1 overflow-y-auto space-y-4 mb-4 chat-scroll">
