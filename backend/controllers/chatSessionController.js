@@ -19,10 +19,9 @@ export const getChatByChatId = async (req, res) => {
 
 export const createChatSession = async (req, res) => {
   try {
-    const { title } = req.body;
     
     const chat = await ChatSession.create({
-      title: title || "New Chat",
+      title: "New Chat",
       messages: [
         {role :"assistant" , content:"hey There , Upload your sources and start asking questions..."}
       ],
@@ -50,8 +49,10 @@ export const addMessage = async (req, res) => {
     const AImessage = {role : "assistant",content:AIresponse,citations}
     chat.messages.push(AImessage);
     await chat.save();
+    const combinedResponse = [userMessage,AImessage]
 
-    res.status(201).json(chat.messages);
+    res.status(201).json(combinedResponse);
+    
   } catch (err) {
     console.error("❌ Error adding message:", err);
     res.status(500).json({ error: "Failed to add message" });
