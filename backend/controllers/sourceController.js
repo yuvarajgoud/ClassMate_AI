@@ -72,7 +72,7 @@ export const addYoutubeSource = async (req, res) => {
   
     const newSource = {
       type: "youtube",
-      title: "YouTube Video",
+      title: url,
       metadata: { url }
     };
 
@@ -102,7 +102,7 @@ export const addWebsiteSource = async (req, res) => {
 
     const newSource = {
       type: "website",
-      title: "Website",
+      title: url,
       metadata: { url }
     };
 
@@ -129,7 +129,7 @@ export const deleteSource = async (req, res) => {
     if (!chat) return res.status(404).json({ error: "Session not found" });
 
     chat.sources = chat.sources.filter(
-      (src) => src._id.toString() !== sourceId
+      (src) => src._id.toString() !== sourceId.toString()
     );
     await chat.save();
     await deleteEmbeddings(chatId,sourceId);
