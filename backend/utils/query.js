@@ -15,10 +15,10 @@ export const queryLLM = async (userQuery, chatId) => {
 
     // 2. Prepare system prompt
     const SYSTEM_PROMPT = `
-        You are a helpful assistant that answers questions strictly based on the provided context.
-        Each context entry includes the document text and its metadata (chatId, sourceId, page, etc).
-        Always use both the content and metadata when forming your answer.
-        If metadata contains page number or title, mention it in your response.
+        You are a helpful assistant that answers questions provided by the user with the context provided.
+        Include the sources in the response like page number and file name in a  file , website url in a website and youtube url in a youtube video.
+        Always answer the question based on the context given to you.
+        If the answer is too small paraphrase it using your knowledge.
 
         Context:
         ${relevantDocs.map(d => `

@@ -48,21 +48,3 @@ export const loadYoutubeVideo = async (youtubeUrl, chatId, sourceId) => {
     const docs = await loader.load();
     storeEmbeddings(docs, chatId, sourceId);
 }
-
-// const storeEmbeddings = async (docs, chatId) => {
-//   const embeddings = new GoogleGenerativeAIEmbeddings({
-//     model: "text-embedding-004",
-//     taskType: TaskType.RETRIEVAL_DOCUMENT,
-//   });
-
-//   await QdrantVectorStore.fromDocuments(
-//     docs,
-//     embeddings,
-//     {
-//       url: "http://localhost:6333",
-//       collectionName: `chat_${chatId}`,  
-//     }
-//   );
-
-//   console.log(`✅ Indexed docs into collection chat_${chatId}`);
-// };
