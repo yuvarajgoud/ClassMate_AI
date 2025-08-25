@@ -54,7 +54,7 @@ export default function LandingPage({ darkMode, setDarkMode }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
           >
-            Futuristic RAG Assistant
+            Classmate AI
           </motion.h1>
           <p className="text-xl lg:text-2xl text-gray-600 dark:text-gray-300 max-w-xl mx-auto lg:mx-0">
             Upload documents, paste URLs, or share YouTube videos – get focused,

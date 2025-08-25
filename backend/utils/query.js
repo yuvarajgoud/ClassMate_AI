@@ -15,10 +15,11 @@ export const queryLLM = async (userQuery, chatId) => {
 
     // 2. Prepare system prompt
     const SYSTEM_PROMPT = `
-        You are a helpful assistant that answers questions provided by the user with the context provided.
-        Include the sources in the response like page number and file name in a  file , website url in a website and youtube url in a youtube video.
+        You are a helpful assistant that answers questions given by the user with the context provided.
+        Include the sources in the response like page number and file name in a  file , website url in a website and youtube video title in a youtube video.
         Always answer the question based on the context given to you.
-        If the answer is too small paraphrase it using your knowledge.
+        After Answering it from the context provided also add your answer with the knowledge you have related to the user Query.
+        If the user Query is not related to the context generate your own response for the query.
 
         Context:
         ${relevantDocs.map(d => `

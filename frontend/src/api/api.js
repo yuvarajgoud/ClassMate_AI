@@ -10,9 +10,14 @@ export const createChat = () => {
 export const getChat = (chatId) => {
   return api.get(`/chat/${chatId}`)
 };
-export const addMessage = (chatId, data) => {
-  return api.post(`/chat/${chatId}/messages`, data)
-};
+
+export const addUserMessage = (chatId, message) =>
+  api.post(`/chat/${chatId}/messages/user`, message);
+
+// Add **assistant** message
+export const addAssistantMessage = (chatId, payload) =>
+  api.post(`/chat/${chatId}/messages/assistant`, payload);
+
 
 export const addWebsite = (chatId, url) => {
   console.log("Inside Add website")

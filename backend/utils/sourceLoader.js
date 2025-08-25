@@ -11,16 +11,16 @@ import { storeEmbeddings } from "./db.js";
 import "dotenv/config"
 
 
-export const loadPDF = async (pdfFilePath, chatId, sourceId) => {
+export const loadPDF = async (pdfFilePath, chatId, sourceId, fileName) => {
   const loader = new PDFLoader(pdfFilePath);
   const docs = await loader.load()
-  await storeEmbeddings(docs, chatId,sourceId);  
+  await storeEmbeddings(docs, chatId,sourceId, fileName);  
 };
 
-export const loadDOCX = async (docFilePath, chatId, sourceId) => {
+export const loadDOCX = async (docFilePath, chatId, sourceId, fileName) => {
   const loader = new DocxLoader(docFilePath);
   const docs = await loader.load();
-  await storeEmbeddings(docs, chatId, sourceId); 
+  await storeEmbeddings(docs, chatId, sourceId, fileName); 
 }
 
 export const loadWebsite = async (websiteURL, chatId, sourceId) => {
@@ -34,10 +34,10 @@ export const loadWebsite = async (websiteURL, chatId, sourceId) => {
   await storeEmbeddings(docs, chatId, sourceId);
 }
 
-export const loadTXT = async (textFilePath, chatId, sourceId) => {
+export const loadTXT = async (textFilePath, chatId, sourceId, fileName) => {
     const loader = new TextLoader(textFilePath);
     const docs = await loader.load();
-    await storeEmbeddings(docs, chatId, sourceId); 
+    await storeEmbeddings(docs, chatId, sourceId, fileName); 
 }
 
 export const loadYoutubeVideo = async (youtubeUrl, chatId, sourceId) => {

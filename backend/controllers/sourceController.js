@@ -23,8 +23,6 @@ export const addFileSource = async (req, res) => {
       metadata: { path: file.path, size: file.size }
     };
 
-
-
     chat.sources.push(newSource);
     await chat.save();
 
@@ -34,13 +32,13 @@ export const addFileSource = async (req, res) => {
     
     console.log(ext)
     if (ext === ".pdf") {
-      await loadPDF(file.path, chatId,sourceId);
+      await loadPDF(file.path, chatId,sourceId,file.originalname);
     } else if (ext === ".docx") {
-      await loadDOCX(file.path, chatId,sourceId);
+      await loadDOCX(file.path, chatId,sourceId,file.originalname);
     } else if (ext === ".xlsx") {
-      await loadXLSX(file.path, chatId,sourceId);
+      await loadXLSX(file.path, chatId,sourceId, file.originalname);
     } else if (ext === ".txt") {
-      await loadTXT(file.path, chatId,sourceId);
+      await loadTXT(file.path, chatId,sourceId,file.originalname);
     }
 
     res.json({ message: "File source added", source: newSource });

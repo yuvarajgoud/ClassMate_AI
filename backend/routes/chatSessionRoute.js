@@ -1,8 +1,9 @@
 import express from "express";
 import {
   createChatSession,
-  addMessage,
-  getChatByChatId
+  getChatByChatId,
+  addUserMessage,
+  addAssistantMessage,
 } from "../controllers/chatSessionController.js";
 
 const router = express.Router();
@@ -14,6 +15,10 @@ router.get("/:chatId", getChatByChatId);
 router.post("/", createChatSession);
 
 // POST add message to session
-router.post("/:chatId/messages", addMessage);
+// Add user message
+router.post("/:chatId/messages/user", addUserMessage);
+
+// Add assistant message
+router.post("/:chatId/messages/assistant", addAssistantMessage);
 
 export default router;

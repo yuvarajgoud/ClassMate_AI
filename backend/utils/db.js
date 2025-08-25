@@ -13,7 +13,7 @@ const embeddings = new GoogleGenerativeAIEmbeddings({
 
 
 
-export const storeEmbeddings = async (docs, chatId, sourceId) => {
+export const storeEmbeddings = async (docs, chatId, sourceId, fileName=null) => {
   const collectionName = "chat_docs";
 
   // Ensure collection exists
@@ -32,6 +32,7 @@ export const storeEmbeddings = async (docs, chatId, sourceId) => {
         text: doc.pageContent,
         chatId,
         sourceId,
+        fileName:fileName ? fileName : "This Doc is not extracted from file",
         ...(doc.metadata || {}),
       },
     });
