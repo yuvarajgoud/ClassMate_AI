@@ -117,7 +117,8 @@ export default function UploadPanel({ chatId }) {
   };
 
   return (
-    <div className="w-1/3 h-[95vh] bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-3xl shadow-2xl flex flex-col">
+    <div className="w-full h-[95vh] bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-3xl shadow-2xl flex flex-col">
+
       {/* Header */}
       <h2 className="text-2xl font-bold text-white tracking-wide drop-shadow-md mb-4">
         📂 Upload Sources
