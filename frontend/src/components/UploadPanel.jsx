@@ -35,6 +35,10 @@ export default function UploadPanel({ chatId }) {
   }, [chatId]);
 
   const handleSubmit = async (type) => {
+    if(file == null){
+      toast.error("Please select upload a file");
+      return;
+    }
     let tempId = Date.now();
     let newSource = {
       _id: tempId,
@@ -80,8 +84,8 @@ export default function UploadPanel({ chatId }) {
 
   const handleDelete = async (sourceId) => {
     try {
-      await deleteSource(chatId, sourceId);
-      setSources((prev) => prev.filter((s) => s._id !== sourceId));
+      const response = await deleteSource(chatId, sourceId);
+      setSources(response.data);
       toast.success("Source deleted 🗑️");
     } catch (err) {
       console.error(err);

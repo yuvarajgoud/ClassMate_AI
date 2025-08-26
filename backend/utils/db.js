@@ -2,8 +2,9 @@ import { QdrantClient } from "@qdrant/js-client-rest";
 import { GoogleGenerativeAIEmbeddings} from "@langchain/google-genai";
 import { TaskType } from "@google/generative-ai";
 import { randomUUID } from "crypto";
+import 'dotenv/config';
 
-const qdrant = new QdrantClient({ url: "http://localhost:6333" });
+const qdrant = new QdrantClient({ url: process.env.QDRANTDB_URL, apiKey: process.env.QDRANT_API_KEY });
 
 // Google embeddings instance
 const embeddings = new GoogleGenerativeAIEmbeddings({
@@ -20,6 +21,17 @@ export const storeEmbeddings = async (docs, chatId, sourceId, fileName=null) => 
   await qdrant.createCollection(collectionName, {
     vectors: { size: 768, distance: "Cosine" },
   }).catch(() => {}); // ignore if exists
+
+  await qdrant.createPayloadIndex(collectionName, {
+    field_name: "chatId",
+    field_schema: "keyword"
+  }).catch(() => {});
+
+  await qdrant.createPayloadIndex("chat_docs", {
+    field_name: "sourceId",
+    field_schema: "keyword"
+  }).catch(() => {}); // ignore if already exists
+
 
   const vectors = [];
   for (const doc of docs) {

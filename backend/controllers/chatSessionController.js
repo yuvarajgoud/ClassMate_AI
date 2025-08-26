@@ -23,7 +23,7 @@ export const createChatSession = async (req, res) => {
     const chat = await ChatSession.create({
       title: "New Chat",
       messages: [
-        {role :"assistant" , content:"hey There , Upload your sources and start asking questions..."}
+        {role :"assistant" , content:"Hi there! I'm your ClassMateAI👨‍🎓 assistant. How can I help you today?"}
       ],
       sources: []
     });

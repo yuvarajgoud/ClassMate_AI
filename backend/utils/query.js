@@ -57,7 +57,7 @@ export const queryLLM = async (userQuery, chatId) => {
     return content.trim() || "⚠️ Sorry, I couldn’t generate a response this time.";
 
   } catch (err) {
-    console.error("❌ LLM API error:", err.message || err);
+    console.error("❌ LLM API error:", err || err);
 
     // return a safe, user-friendly fallback message
     return "⚠️ Sorry, I couldn’t connect to the AI service. Please try again later.";
