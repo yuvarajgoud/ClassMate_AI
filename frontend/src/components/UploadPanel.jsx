@@ -35,7 +35,7 @@ export default function UploadPanel({ chatId }) {
   }, [chatId]);
 
   const handleSubmit = async (type) => {
-    if(file == null){
+    if(type === "file" && file == null){
       toast.error("Please select upload a file");
       return;
     }

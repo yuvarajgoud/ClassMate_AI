@@ -11,7 +11,7 @@ export default function MessageBubble({ role, content }) {
       className={`flex w-full my-2 ${isUser ? "justify-end" : "justify-start"}`}
     >
       <div
-        className={`p-3 rounded-2xl max-w-xl break-words whitespace-pre-wrap overflow-hidden
+        className={`p-3 rounded-2xl max-w-xl break-words whitespace-pre-wrap overflow-hidden mr-3
         ${isUser
           ? "bg-gradient-to-r from-pink-500 to-cyan-400 text-black"
           : "bg-gray-700 text-white"
@@ -33,7 +33,7 @@ export default function MessageBubble({ role, content }) {
                   {String(children).replace(/\n$/, "")}
                 </SyntaxHighlighter>
               ) : (
-                <code className="bg-gray-900 px-1 py-0.5 rounded text-sm">
+                <code className="bg-gray-900 px-1 py-0.5 rounded text-sm mr-2">
                   {children}
                 </code>
               );

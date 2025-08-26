@@ -89,7 +89,17 @@ export const deleteEmbeddings = async (chatId, sourceId) => {
       ],
     },
   });
-
 };
+
+export const deleteChatEmbeddings = async (chatId) => {
+  const collectionName = "chat_docs";
+  await qdrant.delete(collectionName, {
+    filter: {
+      must: [
+        { key: "chatId", match: { value: chatId } }
+      ],
+    },
+  });
+}
 
 

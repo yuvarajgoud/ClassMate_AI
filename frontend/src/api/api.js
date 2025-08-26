@@ -1,8 +1,13 @@
 import axios from "axios";
 
+
 const api = axios.create({
   baseURL: "http://localhost:5000/api",
 });
+
+export const getCredits = () => {
+  return api.get("/chat/getCredits");
+}
 
 export const createChat = () => {
   return api.post("/chat")
@@ -36,5 +41,7 @@ export const addFile = (chatId, file) => {
 };
 
 export const deleteSource = (chatId, sourceId) => api.delete(`/sources/${chatId}/${sourceId}`);
+
+export const deleteChat = (chatId) => api.delete(`/chat/${chatId}`);
 
 export default api;

@@ -1,6 +1,18 @@
 import ChatSession from "../models/ChatSession.js";
 import { queryLLM } from "../utils/query.js"
 
+import { ips,MAX_CREDITS } from "../middlewares/ratelimit.js";
+import { deleteChatEmbeddings } from "../utils/db.js";
+
+export const getCredits = (req, res) => {
+  const ip = req.ip;
+  const credits = ips.get(ip);
+
+  return res.json({
+    credits: credits !== undefined ? credits : MAX_CREDITS,
+  });
+};
+
 export const getChatByChatId = async (req, res) => {
   try {
     const { chatId } = req.params;
@@ -74,6 +86,23 @@ export const addAssistantMessage = async (req, res) => {
     res.status(500).json({ error: "Failed to add assistant message" });
   }
 };
+
+export const deleteChat = async (req, res) => {
+  try {
+    const { chatId } = req.params;
+
+    // 1️⃣ Remove from MongoDB
+    await ChatSession.findByIdAndDelete(chatId);
+
+    await deleteChatEmbeddings(chatId);
+
+    res.json({ success: true, message: "Chat cleaned successfully!" });
+  } catch (err) {
+    console.error("❌ Error deleting chat:", err);
+    res.status(500).json({ error: "Failed to clean chat" });
+  }
+};
+
 
 // export const addMessage = async (req, res) => {
 //   try {

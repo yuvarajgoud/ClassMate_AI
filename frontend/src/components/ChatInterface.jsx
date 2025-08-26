@@ -1,53 +1,80 @@
 import { useState, useEffect, useRef } from "react";
-import { addUserMessage, addAssistantMessage, getChat } from "../api/api";
+import { addUserMessage, addAssistantMessage, getChat,getCredits,deleteChat} from "../api/api";
 import { motion } from "framer-motion";
 import MessageBubble from "./MessageBubble";
 import LoadingSpinner from "./LoadingSpinner";
+import axios from "axios";
 
 export default function ChatInterface({ chatId }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false); // track assistant response
+  const [loading, setLoading] = useState(false);
+  const [credits, setCredits] = useState(null); // 👈 track remaining credits
   const scrollRef = useRef();
 
+  // Fetch chat + credits on mount
   useEffect(() => {
     (async () => {
       const { data } = await getChat(chatId);
       setMessages(data.messages || []);
     })();
+    fetchCredits();
+    return () => {
+      cleanupChat();
+    };
+
   }, [chatId]);
+
+  const cleanupChat = async () => {
+    try {
+      await deleteChat(chatId);
+      console.log(`🧹 Chat ${chatId} cleaned from DB + VectorDB`);
+    } catch (err) {
+      console.error("❌ Failed to clean chat:", err);
+    }
+  };
+
+  // Helper to fetch credits
+  const fetchCredits = async () => {
+    console.log(credits);
+    try {
+      const { data } = await getCredits()
+      console.log(data)
+      setCredits(data.credits);
+    } catch (err) {
+      console.error("❌ Failed to fetch credits:", err);
+    }
+  };
 
   const sendMessage = async () => {
     if (!input) return;
 
-    // 1️⃣ Add user message immediately
     const userMessage = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
 
     try {
-      // Call user message API
       await addUserMessage(chatId, userMessage);
 
-      // 2️⃣ Show temporary assistant loading bubble
       const tempId = Date.now();
       setMessages((prev) => [
         ...prev,
-        { _id: tempId, role: "assistant", content: "", loading: true }
+        { _id: tempId, role: "assistant", content: "", loading: true },
       ]);
       setLoading(true);
 
-      // 3️⃣ Call assistant API
       const { data: assistantMessage } = await addAssistantMessage(chatId, {
-        content: input
+        content: input,
       });
 
-      // 4️⃣ Replace spinner with actual assistant message
       setMessages((prev) =>
         prev.map((msg) =>
           msg._id === tempId ? { ...assistantMessage, loading: false } : msg
         )
       );
+
+      // 👇 After assistant reply, update credits
+      fetchCredits();
     } catch (err) {
       console.error("❌ Failed to send message:", err);
     }
@@ -63,6 +90,16 @@ export default function ChatInterface({ chatId }) {
     <div className="flex flex-col w-full mx-auto space-y-4">
       {/* Chat Card */}
       <div className="flex flex-col h-[95vh] w-full max-w-[1600px] px-6 mx-auto bg-white dark:bg-gray-900 rounded-3xl shadow-xl p-6">
+        
+        {/* Credits Info */}
+        <div className="flex justify-end mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+          {credits !== null && (
+            <span>
+              💎 Remaining Credits: <b>{credits}</b>
+            </span>
+          )}
+        </div>
+
         {/* Messages area */}
         <div className="flex-1 overflow-y-auto space-y-4 mb-4 chat-scroll">
           {messages.map((msg, i) => (

@@ -1,14 +1,12 @@
 
 import ChatSession from "../models/ChatSession.js";
 import path from "path";
-import fs from "fs";
 import { loadPDF, loadDOCX, loadTXT,loadWebsite, loadYoutubeVideo} from "../utils/sourceLoader.js"; 
 import { deleteEmbeddings } from "../utils/db.js";
 
 
 export const addFileSource = async (req, res) => {
   try {
-    console.log("inside addFileSource")
     const { chatId } = req.params;
     const file = req.file;
 
@@ -30,7 +28,6 @@ export const addFileSource = async (req, res) => {
 
     const ext = path.extname(file.originalname).toLowerCase();
     
-    console.log(ext)
     if (ext === ".pdf") {
       await loadPDF(file.path, chatId,sourceId,file.originalname);
     } else if (ext === ".docx") {
