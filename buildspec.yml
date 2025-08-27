@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - cd backend
+      - npm install --force
+  build:
+    commands:
+      - echo "No build step for backend"
+  post_build:
+    commands:
+      - cd ..
+      - mkdir -p artifact
+      - cp -r backend/* artifact/
+      - cp backend/Procfile artifact/
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: artifact
