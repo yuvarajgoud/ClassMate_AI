@@ -8,4 +8,13 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://classmateaiproo.ap-south-1.elasticbeanstalk.com', // backend URL
+        changeOrigin: true,
+        secure: false, // only for HTTP backend
+      }
+    }
+  }
 })
