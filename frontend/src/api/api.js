@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 const api = axios.create({
-  baseURL: "http://classmateaiproo.ap-south-1.elasticbeanstalk.com/api",
+  baseURL: "https://d2kajhf6hfnnba.cloudfront.net/api",
 });
 
 export const getCredits = () => {
