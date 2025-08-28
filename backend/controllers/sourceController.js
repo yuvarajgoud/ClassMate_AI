@@ -24,7 +24,8 @@ export const addFileSource = async (req, res) => {
     chat.sources.push(newSource);
     await chat.save();
 
-    const sourceId = chat.sources[chat.sources.length - 1]._id.toString();
+    const source = chat.sources[chat.sources.length - 1]
+    const sourceId = source._id.toString();
 
     const ext = path.extname(file.originalname).toLowerCase();
     
@@ -38,7 +39,7 @@ export const addFileSource = async (req, res) => {
       await loadTXT(file.path, chatId,sourceId,file.originalname);
     }
 
-    res.json({ message: "File source added", source: newSource });
+    res.json({ message: "File source added", source });
   } catch (err) {
     console.error("❌ Error adding file source:", err);
     res.status(500).json({ error: "Failed to add file source" });
@@ -115,12 +116,13 @@ export const deleteSource = async (req, res) => {
     const chat = await ChatSession.findById(chatId);
     if (!chat) return res.status(404).json({ error: "Session not found" });
     //console.log(sourceId)
-    //console.log(chat.sources)
+    console.log(chat.sources)
     chat.sources = chat.sources.filter(
       (src) => src._id.toString() !== sourceId.toString()
     );
+    
     await chat.save();
-    //console.log(chat.sources)
+    console.log(chat.sources)
     await deleteEmbeddings(chatId,sourceId);
 
     res.json(chat.sources);

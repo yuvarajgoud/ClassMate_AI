@@ -68,12 +68,13 @@ export default function UploadPanel({ chatId }) {
         response = await addYoutube(chatId, youtubeUrl);
         setYoutubeUrl("");
       }
-
+      console.log(response.data);
       setSources((prev) =>
         prev.map((src) =>
-          src._id === tempId ? { ...src, _id: response.data._id, loading: false } : src
+          src._id === tempId ? { ...src, _id: response.data.source._id, loading: false } : src
         )
       );
+      console.log( response.data.source._id);
       toast.success(`${type} uploaded successfully 🚀`);
     } catch (err) {
       console.error(err);
@@ -84,6 +85,8 @@ export default function UploadPanel({ chatId }) {
 
   const handleDelete = async (sourceId) => {
     try {
+      // console.log(sourceId);
+      // console.log(sources);
       const response = await deleteSource(chatId, sourceId);
       setSources(response.data);
       toast.success("Source deleted 🗑️");

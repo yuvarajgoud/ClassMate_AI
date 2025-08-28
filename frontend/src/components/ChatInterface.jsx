@@ -19,9 +19,9 @@ export default function ChatInterface({ chatId }) {
       setMessages(data.messages || []);
     })();
     fetchCredits();
-    return () => {
-      cleanupChat();
-    };
+    // return () => {
+    //   cleanupChat();
+    // };
 
   }, [chatId]);
 
@@ -36,10 +36,10 @@ export default function ChatInterface({ chatId }) {
 
   // Helper to fetch credits
   const fetchCredits = async () => {
-    console.log(credits);
+    // console.log(credits);
     try {
       const { data } = await getCredits()
-      console.log(data)
+      // console.log(data)
       setCredits(data.credits);
     } catch (err) {
       console.error("❌ Failed to fetch credits:", err);
