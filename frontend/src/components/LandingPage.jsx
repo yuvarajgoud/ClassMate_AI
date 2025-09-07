@@ -50,7 +50,7 @@ export default function LandingPage({ darkMode, setDarkMode }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
           >
-            Futuristic RAG Assistant
+            Classmate AI
           </motion.h1>
           <p className="text-xl lg:text-2xl text-gray-600 dark:text-gray-300 max-w-xl mx-auto lg:mx-0">
             Upload documents, paste URLs, or share YouTube videos – get focused,
@@ -213,7 +213,7 @@ export default function LandingPage({ darkMode, setDarkMode }) {
       </motion.section>
 
       {/* Contributors */}
-      {/* Contributors */}
+   {/* Contributors */}
 <motion.section
   className="py-16 bg-gray-50 dark:bg-gray-800 text-center transition-colors duration-500"
   initial={{ opacity: 0, y: 50 }}
