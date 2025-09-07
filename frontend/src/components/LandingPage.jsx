@@ -10,13 +10,12 @@ import {
   Globe,
   Zap,
   Users,
-  Moon,
-  Sun,
 } from "lucide-react";
 
 export default function LandingPage({ darkMode, setDarkMode }) {
   const navigate = useNavigate();
   const [scrollY, setScrollY] = useState(0);
+  const [isDemoOpen, setIsDemoOpen] = useState(false);
 
   const heroImage = "/image.png"; // From public/
 
@@ -38,9 +37,6 @@ export default function LandingPage({ darkMode, setDarkMode }) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      {/* Dark Mode Toggle */}
-    
-
       {/* Hero Section */}
       <section className="flex flex-col lg:flex-row items-center justify-center min-h-screen px-8 py-16">
         <div className="flex-1 space-y-6 text-center lg:text-left">
@@ -70,6 +66,7 @@ export default function LandingPage({ darkMode, setDarkMode }) {
               Start New Chat <ArrowRight className="w-5 h-5" />
             </motion.button>
             <motion.button
+              onClick={() => setIsDemoOpen(true)}
               className="px-8 py-4 border border-gray-300 dark:border-gray-600 rounded-2xl font-bold hover:scale-105 transition flex items-center gap-2"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -158,7 +155,9 @@ export default function LandingPage({ darkMode, setDarkMode }) {
           </motion.div>
         </div>
       </motion.section>
- <div className="h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500"></div>
+
+      <div className="h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500"></div>
+
       {/* Why Choose Us */}
       <motion.section
         className="py-20 bg-white dark:bg-gray-900 transition-colors duration-500"
@@ -214,36 +213,94 @@ export default function LandingPage({ darkMode, setDarkMode }) {
       </motion.section>
 
       {/* Contributors */}
-      <motion.section
-        className="py-16 bg-gray-50 dark:bg-gray-800 text-center transition-colors duration-500"
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.7 }}
+   {/* Contributors */}
+<motion.section
+  className="py-16 bg-gray-50 dark:bg-gray-800 text-center transition-colors duration-500"
+  initial={{ opacity: 0, y: 50 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true, amount: 0.2 }}
+  transition={{ duration: 0.7 }}
+>
+  <h2 className="text-3xl font-bold mb-12">Built By</h2>
+  <div className="container mx-auto px-4 flex flex-wrap justify-center gap-8">
+    {[
+      {
+        name: "Yuvaraj Goud",
+        url: "https://www.linkedin.com/in/yuvarajgoud/",
+      },
+      {
+        name: "Shaik Mahammed Arif",
+        url: "https://www.linkedin.com/in/mahammedarif/",
+      },
+      {
+        name: "Sai Vignesh",
+        url: "https://www.linkedin.com/in/saivignesh-sulaganti-390a862a9/",
+      },
+    ].map((dev, idx) => (
+      <motion.a
+        key={idx}
+        href={dev.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-lg hover:scale-105 transition flex items-center gap-4 w-64"
+        whileHover={{ scale: 1.05 }}
       >
-        <h2 className="text-3xl font-bold mb-12">Built By</h2>
-        <div className="container mx-auto px-4 flex flex-wrap justify-center gap-8">
-          {["Yuvaraj Goud", "Shaik Mahammed Arif", "Sai Vignesh"].map(
-            (name, idx) => (
-              <motion.div
-                key={idx}
-                className="p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-lg hover:scale-105 transition flex items-center gap-4 w-64"
-                whileHover={{ scale: 1.05 }}
-              >
-                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
-                  <Users className="h-6 w-6 text-white" />
-                </div>
-                <div className="text-left">
-                  <h3 className="font-semibold">{name}</h3>
-                  <p className="text-gray-500 dark:text-gray-400 text-sm">
-                    Developer
-                  </p>
-                </div>
-              </motion.div>
-            )
-          )}
+        <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+          <Users className="h-6 w-6 text-white" />
         </div>
-      </motion.section>
+        <div className="text-left">
+          <h3 className="font-semibold">{dev.name}</h3>
+          <p className="text-gray-500 dark:text-gray-400 text-sm">
+            Developer
+          </p>
+        </div>
+      </motion.a>
+    ))}
+  </div>
+</motion.section>
+
+
+      {/* Demo Video Modal */}
+      {isDemoOpen && (
+        <motion.div
+          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setIsDemoOpen(false)} // Close when clicking outside
+        >
+          <motion.div
+            className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg max-w-3xl w-full mx-4 overflow-hidden"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+          >
+            {/* Close Button */}
+            <div className="flex justify-end p-2">
+              <button
+                onClick={() => setIsDemoOpen(false)}
+                className="text-gray-600 dark:text-gray-300 hover:text-red-500"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* YouTube Video */}
+            <div className="aspect-video">
+              <iframe
+                width="100%"
+                height="100%"
+                src="https://www.youtube.com/embed/H-2YQ7yYA8A?si=rfFMcI8QtpwlAQSi&autoplay=1"
+                title="Demo Video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
 
       {/* Footer */}
       <footer className="py-8 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 text-center text-gray-600 dark:text-gray-400 transition-colors duration-500">
